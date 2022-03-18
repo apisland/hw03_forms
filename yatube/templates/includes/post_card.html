@@ -1,4 +1,38 @@
 <article>
+    <ul>
+      {% if show_posts == True %}<a href="{% url 'posts:profile' post.author %}"> {# index #}
+        все посты пользователя {{ post.author.get_full_name }}</a>
+      {% endif %}
+      {% if show_posts == False %} {# profile #}
+      <li>Автор: {{ author.get_full_name }}
+        <a href="{% url 'posts:profile' post.author %}">все посты пользователя</a>
+      </li>  
+      {% endif %}
+      {% if show_author == True %} {# group_list #}
+        <li>
+          Автор: {{ post.author.get_full_name }}
+        </li>
+      {% endif %}
+      {% if show_author == False %} {# profile #}
+        <li>
+          Автор: {{ author.get_full_name }}
+        </li>
+      {% endif %}
+      {% if show_date == True %}
+      <li>
+        Дата публикации: {{ post.pub_date|date:"d E Y" }}
+      </li>
+      {% endif %}
+    </ul>
+    {% if show_text == True %}
+    <p>{{ post.text|linebreaksbr }}</p>
+    {% endif %}
+    {% if show_info == True %} {# profile #}
+      <a href="{% url 'posts:post_detail' post.id %}">подробная информация </a>
+    {% endif %}
+</article>
+
+{% comment %} <article>
   {% with request.resolver_match.view_name as view_name %}
     <ul>
       <li> {# index, profile #}
@@ -23,4 +57,4 @@
       <a href="{% url 'posts:post_detail' post.id %}">подробная информация </a>
     {% endif %}
   {% endwith %}
-</article>
+</article> {% endcomment %}
