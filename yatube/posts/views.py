@@ -1,39 +1,35 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
-from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
+from django.conf import settings
+
 
 from .forms import PostForm
-from .models import Post, Group
+from .models import Post, Group, User
 
 
-CNT_POST: int = 10
-
-
-User = get_user_model()
+def numeration(queryset, request):
+    paginator = Paginator(queryset, settings.CNT_POST)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return page_obj
 
 
 def index(request):
-    post_list = Post.objects.all()
-    paginator = Paginator(post_list, CNT_POST)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    post_list = Post.objects.all().select_related('author', 'group')
     context = {
-        'page_obj': page_obj,
+        'page_obj': numeration(post_list, request)
     }
     return render(request, 'posts/index.html', context)
 
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    post_list = group.posts.all()
-    paginator = Paginator(post_list, CNT_POST)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    post_list = group.posts.select_related('author', 'group')
     context = {
         'group': group,
-        'page_obj': page_obj,
+        'page_obj': numeration(post_list, request),
     }
     return render(request, 'posts/group_list.html', context)
 
@@ -82,31 +78,18 @@ def post_edit(request, post_id):
 
 
 def profile(request, username):  # не трогай, работает
-    # Здесь код запроса к модели и создание словаря контекста
     author = get_object_or_404(User, username=username)
-    user = request.user
-    post_count = author.posts.all().count()
-    author_post = author.posts.all()
-    paginator = Paginator(author_post, CNT_POST)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    author_post = author.posts.select_related('author')
     context = {
         'author': author,
-        'user': user,
-        'page_obj': page_obj,
-        'post_count': post_count
+        'page_obj': numeration(author_post, request),
     }
     return render(request, 'posts/profile.html', context)
 
 
 def post_detail(request, post_id):  # не трогай, работает
-    post = get_object_or_404(Post, id=post_id)
-    author = post.author
-    post_count = author.posts.all().count()
-    # Здесь код запроса к модели и создание словаря контекста
+    post = Post.objects.select_related('group').get(id=post_id)
     context = {
-        'author': author,
-        'post_count': post_count,
         'post': post,
     }
     return render(request, 'posts/post_detail.html', context)

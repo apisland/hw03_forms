@@ -13,12 +13,12 @@ class Group(models.Model):
         return self.title
 
     class Meta:
-        ordering = ['title']
+        ordering = ('title',)
         verbose_name_plural = 'Группы'
 
 
 class Post(models.Model):
-    text = models.TextField()
+    text = models.TextField(blank=False, help_text='Текст нового поста')
     pub_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(
         User,
@@ -34,8 +34,10 @@ class Post(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='posts')
+        related_name='posts',
+        help_text='Группа, '
+                  'к которой относится пост')
 
     class Meta:
-        ordering = ['-pub_date']
+        ordering = ('-pub_date',)
         verbose_name_plural = 'Записи блогов'
