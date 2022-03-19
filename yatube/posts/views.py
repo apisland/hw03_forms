@@ -26,7 +26,7 @@ def index(request):
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    post_list = group.posts.select_related('author', 'group')
+    post_list = group.posts.select_related('author')
     context = {
         'group': group,
         'page_obj': numeration(post_list, request),
@@ -35,51 +35,39 @@ def group_posts(request, slug):
 
 
 @login_required
-def post_create(request):  # не трогай, работает
-    if request.method == 'POST':
-        form = PostForm(request.POST or None)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.save()
-            return redirect('posts:profile', request.user)
-    form = PostForm()
-    context = {
-        'form': form
-    }
-    return render(request, 'posts/create_post.html', context)
+def post_create(request):
+    form = PostForm(request.POST or None)
+    if form.is_valid():
+        post = form.save(commit=False)
+        post.author = request.user
+        post.save()
+        return redirect('posts:profile', request.user)
+    return render(request, 'posts/create_post.html', {'form': form})
 
 
-@login_required  # не трогай, вроде работает
+@login_required
 def post_edit(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    if request.method == "POST":
+    if post.author == request.user:
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
-            post.text = form.cleaned_data['text']
-            post.group = form.cleaned_data['group']
-            post.author = request.user
-            post.save()
             form.save()
             return redirect('posts:post_detail', post.pk)
-        context = {
-            'form': form,
-            'post': post,
-            'is_edit': True
-        }
+        else:
+            form = PostForm(instance=post)
+            context = {
+                'form': form,
+                'post': post,
+                'is_edit': True
+            }
+        return render(request, 'posts/create_post.html', context)
     else:
-        form = PostForm(instance=post)
-        context = {
-            'form': form,
-            'post': post,
-            'is_edit': True
-        }
-    return render(request, 'posts/create_post.html', context)
+        return redirect('posts:post_detail', post.pk)
 
 
-def profile(request, username):  # не трогай, работает
+def profile(request, username):
     author = get_object_or_404(User, username=username)
-    author_post = author.posts.select_related('author')
+    author_post = author.posts.select_related('group')
     context = {
         'author': author,
         'page_obj': numeration(author_post, request),
@@ -87,8 +75,9 @@ def profile(request, username):  # не трогай, работает
     return render(request, 'posts/profile.html', context)
 
 
-def post_detail(request, post_id):  # не трогай, работает
-    post = Post.objects.select_related('group').get(id=post_id)
+def post_detail(request, post_id):
+    post = get_object_or_404(Post.objects.select_related('author', 'group'),
+                             id=post_id)
     context = {
         'post': post,
     }

@@ -1,38 +1,12 @@
 {% extends 'base.html' %}
 {% block title %}Профайл пользователя {{ author.username }} {% endblock %}
-{% block content %}
-  <body>       
-    <div class="container py-5">        
-      <h1>Все посты пользователя {{ author.get_full_name }}</h1>
-        <h3>Всего постов: {{ author.posts.count }} </h3> 
-        {% for post in page_obj %}  
-          {% include 'includes/post_card.html' with show_posts=False %}
-          {% include 'includes/post_card.html' with show_date=True %}
-          {% include 'includes/post_card.html' with show_text=True %}
-          {% include 'includes/post_card.html' with show_info=True %}  
-        {% if post.group %}
-          <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a> {# не трогай! #}
-        {% endif %}         
-        {% if not forloop.last %}<hr>{% endif %}
-        {% endfor %}
-    </div>
-    {% include 'posts/includes/paginator.html' %} 
-  </body>
-{% endblock %}
-
-{% comment %} {% extends 'base.html' %}
-{% block title %}Профайл пользователя {{ author.username }} {% endblock %}
 {% block content %}       
   <div class="container py-5">        
-    <h1>Все посты пользователя {{ author.posts.get_full_name }}</h1>
+    <h1>Все посты пользователя {{ author.get_full_name }}</h1>
       <h3>Всего постов: {{ author.posts.count }} </h3> 
-        {% for post in page_obj %}
-          {% include 'includes/post_card.html' %}
-            {% if post.group %}
-              <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a> {# не трогай! #}
-            {% endif %}        
-          {% if not forloop.last %}<hr>{% endif %}
-        {% endfor %}
+      {% for post in page_obj %}  
+        {% include 'includes/post_card.html' with show_posts=True %}  
+      {% endfor %}
   </div>
-  {% include 'posts/includes/paginator.html' %}
-{% endblock %} {% endcomment %}
+  {% include 'posts/includes/paginator.html' %} 
+{% endblock %}

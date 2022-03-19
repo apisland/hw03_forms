@@ -6,6 +6,5 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ('text', 'group')
-        group = forms.ModelChoiceField(Post.objects.all(),
-                                       required=False,
-                                       )
+        help_texts = {'text': 'Текст нового поста',
+                      'group': 'Группа, к которой относится пост'}

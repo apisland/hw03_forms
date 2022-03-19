@@ -5,25 +5,8 @@
     <h1>{{ group }}</h1>
       <p>{{ group.description }}</p>
         {% for post in page_obj %}
-          {% include 'includes/post_card.html' with show_author=True %}
-          {% include 'includes/post_card.html' with show_date=True %}
-          {% include 'includes/post_card.html' with show_text=True %}
-          {% if not forloop.last %}<hr>{% endif %}
+          {% include 'includes/post_card.html' with show_group=True %}
         {% endfor %}
   </div>
   {% include 'posts/includes/paginator.html' %}
 {% endblock %}
-
-{% comment %} {% extends 'base.html' %}
-{% block title %}Записи сообщества {{ group }}{% endblock %}
-{% block content %}
-  <div class="container">
-    <h1>{{ group }}</h1>
-      <p>{{ group.description|linebreaksbr }}</p>
-        {% for post in page_obj %}
-          {% include 'includes/post_card.html' %}
-            {% if not forloop.last %}<hr>{% endif %}
-        {% endfor %}
-  </div>
-  {% include 'posts/includes/paginator.html' %}
-{% endblock %} {% endcomment %}

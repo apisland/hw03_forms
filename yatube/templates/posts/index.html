@@ -5,30 +5,7 @@
     <h1>Последние обновления на сайте</h1>
       {% for post in page_obj %}
         {% include 'includes/post_card.html' with show_posts=True %}
-        {% include 'includes/post_card.html' with show_author=True %}
-        {% include 'includes/post_card.html' with show_date=True %}
-        {% include 'includes/post_card.html' with show_text=True %}
-        {% if post.group %}
-            <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a>
-        {% endif %}
-        {% if not forloop.last %}<hr>{% endif %}
       {% endfor %}
   </div>
   {% include 'posts/includes/paginator.html' %}
 {% endblock %}
-
-{% comment %} {% extends 'base.html' %}
-{% block title %}Последние обновления на сайте{% endblock %}
-{% block content %}
-  <div class="container">
-    <h1>Последние обновления на сайте</h1>
-      {% for post in page_obj %}
-        {% include 'includes/post_card.html' %}
-          {% if post.group %}
-            <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a>
-          {% endif %}
-        {% if not forloop.last %}<hr>{% endif %}
-      {% endfor %}
-  </div>
-  {% include 'posts/includes/paginator.html' %}
-{% endblock %} {% endcomment %}

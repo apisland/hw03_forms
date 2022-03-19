@@ -1,60 +1,27 @@
 <article>
-    <ul>
-      {% if show_posts == True %}<a href="{% url 'posts:profile' post.author %}"> {# index #}
-        все посты пользователя {{ post.author.get_full_name }}</a>
-      {% endif %}
-      {% if show_posts == False %} {# profile #}
-      <li>Автор: {{ author.get_full_name }}
-        <a href="{% url 'posts:profile' post.author %}">все посты пользователя</a>
-      </li>  
-      {% endif %}
-      {% if show_author == True %} {# group_list #}
-        <li>
-          Автор: {{ post.author.get_full_name }}
-        </li>
-      {% endif %}
-      {% if show_author == False %} {# profile #}
-        <li>
-          Автор: {{ author.get_full_name }}
-        </li>
-      {% endif %}
-      {% if show_date == True %}
-      <li>
-        Дата публикации: {{ post.pub_date|date:"d E Y" }}
-      </li>
-      {% endif %}
-    </ul>
-    {% if show_text == True %}
+  <ul>
+    {% if show_posts %}
+    <a href="{% url 'posts:profile' post.author %}">
+      все посты пользователя {{ post.author.get_full_name }}</a>
+    <li>
+      Дата публикации: {{ post.pub_date|date:"d E Y" }}
+    </li>
+  </ul>
     <p>{{ post.text|linebreaksbr }}</p>
+    <a href="{% url 'posts:post_detail' post.id %}">подробная информация </a>
+      {% if post.group %}
+        <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a>
+      {% endif %}
+        {% if not forloop.last %}<hr>{% endif %}
     {% endif %}
-    {% if show_info == True %} {# profile #}
-      <a href="{% url 'posts:post_detail' post.id %}">подробная информация </a>
+    {% if show_group %}
+    <li>
+      Автор: {{ post.author.get_full_name }}
+    </li>
+    <li>
+      Дата публикации: {{ post.pub_date|date:"d E Y" }}
+    </li>
+    <p>{{ post.text|linebreaksbr }}</p>
+      {% if not forloop.last %}<hr>{% endif %}
     {% endif %}
 </article>
-
-{% comment %} <article>
-  {% with request.resolver_match.view_name as view_name %}
-    <ul>
-      <li> {# index, profile #}
-          {% if view_name  == 'posts:index' %}<a href="{% url 'posts:profile' post.author %}">
-            все посты пользователя {{ post.author.get_full_name }}</a>
-          {% else %}
-            Автор: {{ author.posts.get_full_name }}
-            <a href="{% url 'posts:profile' post.author %}">все посты пользователя</a>
-          {% endif %}
-      </li>
-        {% if view_name  != 'posts:index' %} {# group_list, profile #}
-          <li>
-            Автор: {{ post.author.get_full_name }}
-          </li>
-        {% endif %}
-      <li>
-        Дата публикации: {{ post.pub_date|date:"d E Y" }}
-      </li>
-    </ul>
-    <p>{{ post.text|linebreaksbr }}</p>
-    {% if view_name  == 'posts:profile' %} {# profile #}
-      <a href="{% url 'posts:post_detail' post.id %}">подробная информация </a>
-    {% endif %}
-  {% endwith %}
-</article> {% endcomment %}

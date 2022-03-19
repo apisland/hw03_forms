@@ -36,7 +36,8 @@ class Post(models.Model):
         null=True,
         related_name='posts',
         help_text='Группа, '
-                  'к которой относится пост')
+                  'к которой относится пост'
+    )
 
     class Meta:
         ordering = ('-pub_date',)
