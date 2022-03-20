@@ -57,7 +57,11 @@
                     Group                  
                   </label>
                   <select name="group" class="form-control" id="id_group">
-                    <option value="" selected>---------</option>
+                    <option selected aria-required="false">
+                    {% for field in form.group %}
+                      {{ field }}
+                    {% endfor %}
+                    </option>
                   </select>
                   <small id="id_group-help" class="form-text text-muted">
                     {{ form.group.help_text }}
